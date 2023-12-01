@@ -70,7 +70,7 @@ pub fn solve(input: std::str::Lines<'_>) -> SolutionPair {
             .chars()
             .filter(|chr| chr.is_digit(10))
             .collect())
-        .map(|i: String| i.chars().next().unwrap().to_string() + &i.chars().last().unwrap().to_string())
+        .map(|i: String| i.chars().take(1).chain(i.chars().rev().take(1)).collect::<String>())
         .map(|x| x.parse::<u64>().unwrap())
         .collect();
     let sol1: u64 = filtered_input_pt1.iter().sum();
