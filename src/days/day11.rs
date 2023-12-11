@@ -41,18 +41,18 @@ fn process_input(input: std::str::Lines<'_>) -> (Vec<String>, Vec<(u64, u64)>) {
 
     (result, hash_indices)
 }
-
+ 
 fn generate_indices(x1: usize, y1: usize, x2: usize, y2: usize) -> Vec<(usize, usize)> {
     let mut indices = Vec::new();
-
+ 
     for x in min(x1, x2) + 1..=max(x1, x2) {
         indices.push((x, y1));
     }
-
+ 
     for y in min(y1, y2) + 1..=max(y1, y2) {
         indices.push((x2, y));
     }
-
+ 
     indices
 }
 
@@ -60,23 +60,26 @@ pub fn solve(input: std::str::Lines<'_>) -> SolutionPair {
 
     let (res, idxs) = process_input(input);
 
-    let mut count_pairs = 0;
     let mut allsum1: u64 = 0;
     let mut allsum2: u64 = 0;
+    
+    let res_chars: Vec<Vec<char>> = res.iter().map(|s| s.chars().collect()).collect();
+
     for (idx1, coords1) in idxs.iter().enumerate() {
-        let x1 = coords1.1;
-        let y1 = coords1.0;
+        let x1: usize = coords1.1 as usize;
+        let y1: usize = coords1.0 as usize;
         for (idx2, coords2) in idxs[idx1 + 1..].iter().enumerate() {
-            let x2 = coords2.1;
-            let y2 = coords2.0;
-            count_pairs += 1;
+            let x2: usize = coords2.1 as usize;
+            let y2: usize = coords2.0 as usize;
+
             let mut sum1: u64 = 0;
             let mut sum2: u64 = 0;
-            for index in generate_indices(x1 as usize, y1 as usize, x2 as usize, y2 as usize) {
-                let x = index.1 as usize;
-                let y = index.0;
-                match res[x].chars().nth(y) {
-                    Some('2') => {
+
+            // you could make the thing below a function but i'm not gonna bother for now B)
+            for x in min(x1, x2) + 1..=max(x1, x2) {
+                let y = y1;
+                match res_chars[y][x] {
+                    '2' => {
                         sum1 += 2;
                         sum2 += 1000000;
                     },
@@ -86,6 +89,21 @@ pub fn solve(input: std::str::Lines<'_>) -> SolutionPair {
                     },
                 }
             }
+            
+            for y in min(y1, y2) + 1..=max(y1, y2) {
+                let x = x2;
+                match res_chars[y][x] {
+                    '2' => {
+                        sum1 += 2;
+                        sum2 += 1000000;
+                    },
+                    _ => {
+                        sum1 += 1;
+                        sum2 += 1;
+                    },
+                }
+            }
+
             allsum1 += sum1;
             allsum2 += sum2;
         }
